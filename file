@@ -1,0 +1,79 @@
+import pandas as pd
+import io
+
+# The CSV data as a string
+csv_data = """pd.user_id,ref_adnetwork,network_revenue
+93246,Facebook,144010.53
+93369,Facebook,73225.12
+93390,facebook,63972.17
+93577,Taboola,69182.62
+93577,meta,6586.64
+93774,Organic,89919.11
+93829,SEO,130802.9
+93842,Facebook,354660.32
+93950,Pangle,60772.53
+93950,taboola,5359.04
+93950,kwai,4292.28
+93950,outbrain,4140.48
+94009,meta,749288.88
+94095,Email,150684.15
+94488,Outbrain,133242.3
+94514,Pangle,182672.6
+94519,Email,77369.35
+94527,outbrain,295262.94
+94527,taboola,137631.04
+94554,outbrain,42854.62
+94554,Outbrain,17372.83
+94576,Facebook,118521.77
+94576,google,94416.95
+94591,tiktok,37616.99
+94591,bigo,28797.42
+94666,meta,1062336.52
+94666,Pangle,63975.09
+94666,TikTok,23433.51
+94693,facebook,64124.76
+94880,taboola,135683.49
+94880,outbrain,10355.61
+95027,facebook,370131.29
+95093,GDN,211520.38
+95176,meta,75164.23
+95207,Facebook,50768.41
+95267,outbrain,45878.99
+95285,google,147167.11
+95364,meta,65509.42
+95447,tiktok,228701.31
+95449,Facebook,322296.01
+95461,tiktok,67647.04
+95461,bigo,53201.86
+95531,outbrain,549387.01
+95531,taboola,223974.2
+95664,taboola,34794.45
+95664,outbrain,27064.76
+95678,outbrain,49116.8
+95795,tiktok,59081.99
+95809,bigo,206630.89
+95809,tiktok,70333.87
+95809,google display network,3046.14
+95937,meta,52570.27
+95937,TikTok,668.31"""
+
+# Read the CSV data into a DataFrame
+df = pd.read_csv(io.StringIO(csv_data))
+
+# Convert pd.user_id to integer type
+df['pd.user_id'] = df['pd.user_id'].astype(int)
+
+# Convert network_revenue to float type
+df['network_revenue'] = df['network_revenue'].astype(float)
+
+# Calculate the percentage
+df['revenue_percentage'] = df.groupby('pd.user_id')['network_revenue'].transform(lambda x: x / x.sum() * 100)
+
+# Sort the results
+df = df.sort_values(['pd.user_id', 'network_revenue'], ascending=[True, False])
+
+# Display the results
+print(df)
+
+# Optionally, save the results to a new CSV file
+# df.to_csv('revenue_with_percentage.csv', index=False)
