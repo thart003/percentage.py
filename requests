@@ -1,0 +1,50 @@
+import requests
+from typing import List, Dict, Optional
+
+def get_kwopt_terms(user_id: int) -> Optional[List[Dict[str, str]]]:
+    # actual API endpoint
+    url = f'https://api.example.com/kwopt_terms/{user_id}'
+    
+    headers = {
+        'Authorization': 'Bearer YOUR_API_KEY_HERE'  # actual API key
+    }
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        
+        data = response.json()
+        
+        # Sort the data by EPC (assuming it's provided in the response)
+        sorted_data = sorted(data, key=lambda x: x.get('epc', 0), reverse=True)
+        
+        # Format the output as required
+        formatted_data = [
+            {
+                'Domain': item['domain'],
+                'Term1': item.get('terms', [''])[0],
+                'Term2': item.get('terms', ['', ''])[1],
+                'Term3': item.get('terms', ['', '', ''])[2],
+                'Term4': item.get('terms', ['', '', '', ''])[3]
+            }
+            for item in sorted_data
+        ]
+        
+        return formatted_data
+    except requests.RequestException as e:
+        print(f"An error occurred: {e}")
+        return None
+
+def main():
+    user_id = 96177  # user ID from the request
+    terms = get_kwopt_terms(user_id)
+    
+    if terms:
+        print("Domain,Term1,Term2,Term3,Term4")
+        for term in terms:
+            print(f"{term['Domain']},{term['Term1']},{term['Term2']},{term['Term3']},{term['Term4']}")
+    else:
+        print("Failed to fetch KWOPT terms.")
+
+if __name__ == '__main__':
+    main()
